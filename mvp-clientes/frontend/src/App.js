@@ -8,32 +8,46 @@ function App() {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
 
-  const API = "https://special-palm-tree-r447rp4jrg7q25gwj-8080.app.github.dev/clientes";
-
+  const API = "https://mvp-clientes-1.onrender.com/clientes";
+  
   const carregarClientes = async () => {
     const response = await axios.get(API);
     setClientes(response.data);
   };
 
   const salvarCliente = async () => {
+    if (!nome || !telefone) {
+  alert("Preencha todos os campos!");
+  return;
+}
 
-    await axios.post(API, {
-      nome,
-      telefone
-    });
+  await axios.post(API, {
+    nome,
+    telefone
+  });
 
-    setNome("");
-    setTelefone("");
+  alert("Cliente cadastrado com sucesso!");
 
-    carregarClientes();
-  };
+  setNome("");
+  setTelefone("");
+
+  carregarClientes();
+};
 
   useEffect(() => {
     carregarClientes();
   }, []);
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div
+  style={{
+    maxWidth: "600px",
+    margin: "40px auto",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "10px"
+  }}
+>
 
       <h1>Cadastro de Clientes</h1>
 
