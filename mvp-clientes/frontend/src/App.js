@@ -7,49 +7,92 @@ const [clientes, setClientes] = useState([]);
 const [nome, setNome] = useState("");
 const [telefone, setTelefone] = useState("");
 const [busca, setBusca] = useState("");
+const [idEdicao, setIdEdicao] = useState(null);
 
 const API = "https://mvp-clientes-1.onrender.com/clientes";
 
 const carregarClientes = async () => {
+try {
 const response = await axios.get(API);
 setClientes(response.data);
+} catch (error) {
+console.error(error);
+}
 };
 
 const salvarCliente = async () => {
+try {
 
-```
-if (!nome || !telefone) {
-  alert("Preencha todos os campos!");
-  return;
+
+  if (!nome || !telefone) {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  if (idEdicao) {
+
+    await axios.put(`${API}/${idEdicao}`, {
+      nome,
+      telefone
+    });
+
+    alert("Cliente atualizado com sucesso!");
+
+    setIdEdicao(null);
+
+  } else {
+
+    await axios.post(API, {
+      nome,
+      telefone
+    });
+
+    alert("Cliente cadastrado com sucesso!");
+  }
+
+  setNome("");
+  setTelefone("");
+
+  carregarClientes();
+
+} catch (error) {
+  console.error(error);
+  alert("Erro ao salvar cliente.");
 }
 
-await axios.post(API, {
-  nome,
-  telefone
-});
 
-alert("Cliente cadastrado com sucesso!");
+};
 
-setNome("");
-setTelefone("");
-
-carregarClientes();
-```
-
+const editarCliente = (cliente) => {
+setIdEdicao(cliente.id);
+setNome(cliente.nome);
+setTelefone(cliente.telefone);
 };
 
 const excluirCliente = async (id) => {
 
 
-if (!window.confirm("Deseja realmente excluir este cliente?")) {
+const confirmar = window.confirm(
+  "Deseja realmente excluir este cliente?"
+);
+
+if (!confirmar) {
   return;
 }
 
-await axios.delete(`${API}/${id}`);
+try {
 
-alert("Cliente excluído com sucesso!");
+  await axios.delete(`${API}/${id}`);
 
-carregarClientes();
+  alert("Cliente excluído com sucesso!");
+
+  carregarClientes();
+
+} catch (error) {
+  console.error(error);
+  alert("Erro ao excluir cliente.");
+}
+
 
 };
 
@@ -64,17 +107,15 @@ cliente.nome.toLowerCase().includes(busca.toLowerCase())
 return (
 <div
 style={{
-maxWidth: "600px",
+maxWidth: "700px",
 margin: "40px auto",
 padding: "20px",
 border: "1px solid #ddd",
 borderRadius: "10px",
 fontFamily: "Arial"
 }}
->
+> <h1>Cadastro de Clientes</h1>
 
-
-  <h1>Cadastro de Clientes</h1>
 
   <input
     placeholder="Buscar cliente"
@@ -116,14 +157,14 @@ fontFamily: "Arial"
       cursor: "pointer"
     }}
   >
-    Salvar Cliente
+    {idEdicao ? "Atualizar Cliente" : "Salvar Cliente"}
   </button>
 
   <hr />
 
-  <h2>Clientes</h2>
+  <h3>Total de clientes: {clientesFiltrados.length}</h3>
 
-  {clientesFiltrados.map(cliente => (
+  {clientesFiltrados.map((cliente) => (
     <div
       key={cliente.id}
       style={{
@@ -142,14 +183,20 @@ fontFamily: "Arial"
       <br /><br />
 
       <button
+        onClick={() => editarCliente(cliente)}
+      >
+        Editar
+      </button>
+
+      {" "}
+
+      <button
         onClick={() => excluirCliente(cliente.id)}
       >
         Excluir
       </button>
-
     </div>
   ))}
-
 </div>
 
 
