@@ -32,4 +32,22 @@ public class ClienteController {
     public Cliente salvar(@RequestBody Cliente cliente) {
         return repository.save(cliente);
     }
+
+    @PutMapping("/{id}")
+public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+
+cliente.setId(id);
+
+return repository.save(cliente);
+
+}
+
+@DeleteMapping("/{id}")
+public void excluir(@PathVariable Long id) {
+
+repository.deleteById(id);
+
+
+}
+
 }
