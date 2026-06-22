@@ -1,12 +1,12 @@
 package com.douglas.mvp_clientes.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import com.douglas.mvp_clientes.model.Cliente;
 import com.douglas.mvp_clientes.repository.ClienteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,24 +30,32 @@ public class ClienteController {
 
     @PostMapping
     public Cliente salvar(@RequestBody Cliente cliente) {
+
+        if (cliente.getDataCadastro() == null) {
+            cliente.setDataCadastro(LocalDate.now());
+        }
+
         return repository.save(cliente);
     }
 
     @PutMapping("/{id}")
-public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+    public Cliente atualizar(
+            @PathVariable Long id,
+            @RequestBody Cliente cliente) {
 
-cliente.setId(id);
+        cliente.setId(id);
 
-return repository.save(cliente);
+        // Mantém a data original caso ela venha nula
+        if (cliente.getDataCadastro() == null) {
+            repository.findById(id)
+                    .ifPresent(c -> cliente.setDataCadastro(c.getDataCadastro()));
+        }
 
-}
+        return repository.save(cliente);
+    }
 
-@DeleteMapping("/{id}")
-public void excluir(@PathVariable Long id) {
-
-repository.deleteById(id);
-
-
-}
-
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+        repository.deleteById(id);
+    }
 }
