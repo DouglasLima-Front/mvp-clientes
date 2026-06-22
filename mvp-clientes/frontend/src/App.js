@@ -421,8 +421,9 @@ maxWidth: "1000px",
 )}
 
       <br /><br />
+<br /><br />
 
-      <button></button>
+<button
   onClick={() => editarCliente(cliente)}
   style={{
     background: "#16A34A",
@@ -432,11 +433,13 @@ maxWidth: "1000px",
     borderRadius: "6px",
     cursor: "pointer"
   }}
+>
+  Editar
+</button>
 
+{" "}
 
-      {" "}
-
-      <button></button>
+<button
   onClick={() => excluirCliente(cliente.id)}
   style={{
     background: "#DC2626",
@@ -446,7 +449,9 @@ maxWidth: "1000px",
     borderRadius: "6px",
     cursor: "pointer"
   }}
-
+>
+  Excluir
+</button>
 
     </div>
   ))}
