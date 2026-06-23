@@ -143,27 +143,39 @@ const agendarRevisao = async (cliente) => {
 
   try {
 
-    await axios.post(API_REVISOES, {
-
-      dataRevisao: data,
-
-      cliente: {
-        id: cliente.id
+    const response = await axios.post(
+      API_REVISOES,
+      {
+        dataRevisao: data,
+        cliente: {
+          id: cliente.id
+        }
       }
-
-    });
-
-    alert(
-      "Revisão agendada com sucesso!"
     );
+
+    console.log("SUCESSO:");
+    console.log(response.data);
+
+    alert("Revisão agendada com sucesso!");
 
     carregarRevisoes();
 
   } catch (error) {
 
-    alert(
-      "Este dia já possui 3 revisões agendadas."
-    );
+    console.log("ERRO COMPLETO:");
+    console.log(error);
+
+    console.log("RESPOSTA:");
+    console.log(error.response);
+
+    console.log("DADOS:");
+console.log(JSON.stringify(error.response?.data, null, 2));
+
+alert(
+  JSON.stringify(error.response?.data, null, 2)
+);
+
+    alert("Erro ao agendar revisão. Veja o Console (F12).");
 
   }
 

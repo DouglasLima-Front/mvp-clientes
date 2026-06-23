@@ -29,9 +29,21 @@ public class RevisaoController {
         System.out.println("NOVA TENTATIVA DE AGENDAMENTO");
         System.out.println("====================================");
 
+        if (revisao == null) {
+            System.out.println("ERRO: Revisao veio NULL");
+            throw new RuntimeException("Revisao não recebida.");
+        }
+
+        System.out.println("Data recebida: " + revisao.getDataRevisao());
+
+        if (revisao.getCliente() == null) {
+            System.out.println("ERRO: Cliente veio NULL");
+            throw new RuntimeException("Cliente não informado.");
+        }
+
         System.out.println(
-                "Data recebida: "
-                        + revisao.getDataRevisao()
+                "Cliente ID recebido: "
+                        + revisao.getCliente().getId()
         );
 
         List<Revisao> todas = repository.findAll();
