@@ -24,28 +24,44 @@ public class RevisaoController {
     @PostMapping
     public Revisao agendar(@RequestBody Revisao revisao) {
 
-        long quantidade =
-                repository.countByDataRevisao(
-                        revisao.getDataRevisao()
-                );
-
-        System.out.println(
-                "=================================="
-        );
+        System.out.println("\n");
+        System.out.println("====================================");
+        System.out.println("NOVA TENTATIVA DE AGENDAMENTO");
+        System.out.println("====================================");
 
         System.out.println(
                 "Data recebida: "
                         + revisao.getDataRevisao()
         );
 
+        List<Revisao> todas = repository.findAll();
+
         System.out.println(
-                "Quantidade encontrada: "
+                "Total de revisões cadastradas: "
+                        + todas.size()
+        );
+
+        for (Revisao r : todas) {
+
+            System.out.println(
+                    "ID: " + r.getId()
+                            + " | Data: "
+                            + r.getDataRevisao()
+            );
+
+        }
+
+        long quantidade =
+                repository.countByDataRevisao(
+                        revisao.getDataRevisao()
+                );
+
+        System.out.println(
+                "Quantidade encontrada para esta data: "
                         + quantidade
         );
 
-        System.out.println(
-                "=================================="
-        );
+        System.out.println("====================================");
 
         if (quantidade >= 3) {
 
