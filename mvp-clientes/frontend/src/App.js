@@ -13,8 +13,11 @@ const [idEdicao, setIdEdicao] = useState(null);
 const [locatario, setLocatario] = useState(false);
 const [placaMoto, setPlacaMoto] = useState("");
 const [observacoes, setObservacoes] = useState("");
+const [revisoes, setRevisoes] = useState([]);
+const [mostrarRevisoes, setMostrarRevisoes] = useState(false);
 
 const API = "https://mvp-clientes-1.onrender.com/clientes";
+const API_REVISOES = "https://mvp-clientes-1.onrender.com/revisoes";
 
 const carregarClientes = async () => {
 try {
@@ -23,6 +26,23 @@ setClientes(response.data);
 } catch (error) {
 console.error(error);
 }
+};
+
+const carregarRevisoes = async () => {
+
+  try {
+
+    const response =
+      await axios.get(API_REVISOES);
+
+    setRevisoes(response.data);
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
 };
 
 const salvarCliente = async () => {
@@ -113,8 +133,45 @@ try {
 
 };
 
+const agendarRevisao = async (cliente) => {
+
+  const data = prompt(
+    "Digite a data da revisão (AAAA-MM-DD)"
+  );
+
+  if (!data) return;
+
+  try {
+
+    await axios.post(API_REVISOES, {
+
+      dataRevisao: data,
+
+      cliente: {
+        id: cliente.id
+      }
+
+    });
+
+    alert(
+      "Revisão agendada com sucesso!"
+    );
+
+    carregarRevisoes();
+
+  } catch (error) {
+
+    alert(
+      "Este dia já possui 3 revisões agendadas."
+    );
+
+  }
+
+};
+
 useEffect(() => {
 carregarClientes();
+carregarRevisoes();
 }, []);
 
 const clientesFiltrados = clientes.filter(cliente =>
@@ -365,6 +422,88 @@ maxWidth: "1000px",
     : "Salvar Cliente"}
 </button>
 
+  <button
+  onClick={() =>
+    setMostrarRevisoes(!mostrarRevisoes)
+  }
+  style={{
+    marginLeft: "10px",
+    padding: "14px 25px",
+    background: "#F59E0B",
+    color: "white",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer"
+  }}
+>
+  📅 Revisões Agendadas
+</button>
+
+  {
+mostrarRevisoes && (
+
+<div
+style={{
+background: "#fff",
+padding: "20px",
+borderRadius: "12px",
+marginBottom: "20px",
+boxShadow:
+"0 4px 15px rgba(0,0,0,0.1)"
+}}
+>
+
+<h2>
+📅 Revisões Agendadas
+</h2>
+
+{
+revisoes.length === 0
+?
+
+<p>
+Nenhuma revisão agendada.
+</p>
+
+:
+
+revisoes.map((revisao) => (
+
+<div
+key={revisao.id}
+style={{
+borderBottom:
+"1px solid #eee",
+padding: "10px 0"
+}}
+>
+
+<strong>
+{revisao.cliente.nome}
+</strong>
+
+<br />
+
+📞 {revisao.cliente.telefone}
+
+<br />
+
+🏍️ {revisao.cliente.placaMoto}
+
+<br />
+
+📅 {revisao.dataRevisao}
+
+</div>
+
+))
+}
+
+</div>
+
+)
+}
+
   <hr />
 
   <h3>Total de clientes: {clientesFiltrados.length}</h3>
@@ -436,6 +575,29 @@ maxWidth: "1000px",
 >
   Editar
 </button>
+
+{
+cliente.locatario && (
+
+<button
+onClick={() =>
+agendarRevisao(cliente)
+}
+style={{
+background: "#F59E0B",
+color: "white",
+border: "none",
+padding: "8px 15px",
+borderRadius: "6px",
+cursor: "pointer",
+marginLeft: "8px"
+}}
+>
+📅 Revisão
+</button>
+
+)
+}
 
 {" "}
 
